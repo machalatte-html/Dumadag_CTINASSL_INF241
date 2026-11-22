@@ -42,6 +42,10 @@ The catalog is displayed in Philippine pesos. Starter USD-derived catalog values
 
 For production, set `NODE_ENV=production`, a long unique `SESSION_SECRET`, the exact HTTPS storefront origin, `COOKIE_SAME_SITE=lax` (or `strict` when practical), and the Atlas URI. Serve the client over HTTPS. Production cookies are Secure and HttpOnly. If your frontend and API are on different sites, configure SameSite and CSRF behavior deliberately rather than broadly allowing origins.
 
+### Deploying to Vercel
+
+The Vite storefront and Express API deploy from the same project. `vercel.json` routes `/api/*` to the Vercel Function in `api/handler.js`, which opens the MongoDB connection and forwards requests to the existing Express API. Add `MONGODB_URI`, `SESSION_SECRET` (at least 32 random characters), and `CLIENT_ORIGIN` (the exact site origin, such as `https://your-project.vercel.app`) under Vercel Project Settings → Environment Variables, then redeploy. Do not upload `.env` to GitHub. Use the production domain for public access; preview deployment URLs may require Vercel authentication depending on Deployment Protection settings.
+
 ## Create the first administrator
 
 Registration only creates customer accounts; it cannot set roles. After registering the intended admin account, use a trusted Atlas administrative interface to set that account's `role` field to `admin`. Keep database owner credentials separate from the application database user. The `.env.example` admin variables are placeholders and are not used to auto-promote an account.

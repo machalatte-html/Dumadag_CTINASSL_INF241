@@ -14,8 +14,8 @@
     "db:convert-php": "node server/convert-catalog-php.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"server/**/*.js\" index.html vite.config.js package.json README.md",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"server/**/*.js\" index.html vite.config.js package.json README.md",
+    "format": "prettier --write \"src/**/*.{js,jsx,css}\" \"server/**/*.js\" \"api/**/*.js\" index.html vite.config.js vercel.json package.json README.md",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\" \"server/**/*.js\" \"api/**/*.js\" index.html vite.config.js vercel.json package.json README.md",
     "check": "npm run build && npm test"
   },
   "dependencies": {
