@@ -115,18 +115,39 @@ const currency = (n) =>
     currency: 'PHP',
     maximumFractionDigits: 0,
   }).format(n);
+let apiBaseUrlPromise;
+async function getApiBaseUrl() {
+  if (!apiBaseUrlPromise) {
+    apiBaseUrlPromise = fetch('/api-config.json', { cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('API config is unavailable');
+        const config = await response.json();
+        const apiBaseUrl = String(config.apiBaseUrl || '/api')
+          .trim()
+          .replace(/\/+$/, '');
+        if (!apiBaseUrl.startsWith('/') && !/^https?:\/\//i.test(apiBaseUrl)) {
+          throw new Error('API base URL must be a path or HTTP URL');
+        }
+        return apiBaseUrl || '/api';
+      })
+      .catch(() => '/api');
+  }
+  return apiBaseUrlPromise;
+}
 async function api(path, options = {}) {
+  const apiBaseUrl = await getApiBaseUrl();
+  const endpoint = `${apiBaseUrl}${path.startsWith('/') ? path : `/${path}`}`;
   let token = sessionStorage.getItem('csrf') || '';
   const isWrite = !['GET', 'HEAD'].includes(options.method || 'GET');
   const isAuthEntry = ['/auth/login', '/auth/register'].includes(path);
   if (isWrite && (isAuthEntry || !token)) {
     try {
-      const csrf = await fetch('/api/csrf', { credentials: 'include' });
+      const csrf = await fetch(`${apiBaseUrl}/csrf`, { credentials: 'include' });
       token = (await csrf.json()).token;
       sessionStorage.setItem('csrf', token);
     } catch {}
   }
-  const response = await fetch(`/api${path}`, {
+  const response = await fetch(endpoint, {
     credentials: 'include',
     ...options,
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token, ...options.headers },
