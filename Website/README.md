@@ -53,6 +53,24 @@ npm run dev       # Vite + Express with reload
 npm run build     # production frontend bundle
 npm start         # Express API
 npm test          # API security and route tests
+```
+
+## Postman
+
+Import `postman/PCMAX.postman_collection.json` and `postman/PCMAX.postman_environment.json` into Postman (or Newman). Select **PCMAX Local**, align `adminEmail` and `adminPassword` with your administrator account, and run the API on port 4000.
+
+The collection has two folders:
+
+- **Customer** — register, catalog, checkout, order history, and a `403` check on `/api/admin/overview`
+- **Admin** — login, dashboard reads, and a sample product create
+
+Run the full collection in order (customer first, then admin) so cookies and CSRF tokens stay in sequence. Newman example:
+
+```sh
+npx newman run postman/PCMAX.postman_collection.json -e postman/PCMAX.postman_environment.json
+```
+
+```sh
 npm run check     # build and tests
 npm run db:init   # indexes and starter categories
 npm run db:seed-products # at least three products per category
